@@ -2,8 +2,8 @@
 from pprint import pprint
 
 DEBUG = False
-LOG_LEVEL = 3
-
+LOG_LEVEL = 0
+BATCH_SIZE = 1000
 
 
 def log(value, level=0):

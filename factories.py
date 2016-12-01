@@ -27,10 +27,15 @@ class Candidates(object):
 
                 try:
                     Candidate(**candidate_record)
+                    if i % app.BATCH_SIZE == 0:
+                        app.log('commit!', level=5)
+                        pony.commit()
                 except pony.core.CacheIndexError:
                     pass
                 except pony.core.TransactionIntegrityError:
                     pass
+
+
 
                 i += 1
 
@@ -57,10 +62,14 @@ class Committees(object):
 
                 try:
                     Committee(**committee_record)
+                    if i % app.BATCH_SIZE == 0:
+                        app.log('commit!', level=5)
+                        pony.commit()
                 except pony.core.CacheIndexError:
                     pass
                 except pony.core.TransactionIntegrityError:
                     pass
+
 
                 i += 1
 
@@ -83,10 +92,19 @@ class Contributions(object):
             for line in f:
                 app.log('contrib: {}'.format(i), level=3)
                 contribution_record = dict(zip(self.keys, [x.strip() for x in line.split('|')]))
-                # if contribution_record['CITY'] == "LONG BEACH" and contribution_record['STATE'] == "CA":
-                if True:
-                    # app.log(contribution_record)
+
+                try:
                     this_contrib = Contribution(**contribution_record)
                     this_committee = Committee.get(CMTE_ID=this_contrib.CMTE_ID)
                     this_contrib.committee = this_committee
+
+                    if i % app.BATCH_SIZE == 0:
+                        app.log('commit!', level=5)
+                        pony.commit()
+                except pony.core.CacheIndexError:
+                    pass
+                except pony.core.TransactionIntegrityError:
+                    pass
+
+                    
                 i += 1
